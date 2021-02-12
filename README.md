@@ -1,0 +1,3 @@
+# Symmetry
+
+Sculpting with symmetry
