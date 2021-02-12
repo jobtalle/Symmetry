@@ -4,7 +4,7 @@
  * @param {number} size The length of the edges
  * @constructor
  */
-const ModelCube = function(gl, size = .2) {
+const ModelCube = function(gl, size = 1) {
     const halfSize = size * .5;
     const vertices = [
         // Front

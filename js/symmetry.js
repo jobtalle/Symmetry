@@ -21,7 +21,6 @@ const Symmetry = function(canvas) {
 Symmetry.prototype.ZNEAR = .1;
 Symmetry.prototype.ZFAR = 100;
 Symmetry.prototype.ANGLE = Math.PI * .35;
-Symmetry.prototype.UPDATE_RATE = 1 / 30;
 Symmetry.prototype.FRAME_TIME_MAX = .1;
 
 /**
@@ -34,28 +33,12 @@ Symmetry.prototype.updateMatrices = function() {
 };
 
 /**
- * Update the renderer
- */
-Symmetry.prototype.update = function() {
-    this.orbitControls.update();
-};
-
-/**
  * Draw the scene in this renderer
  * @param {number} deltaTime Passed time in seconds
  */
 Symmetry.prototype.draw = function(deltaTime) {
-    this.time += Math.min(this.FRAME_TIME_MAX, deltaTime);
-
-    while (this.time > this.UPDATE_RATE) {
-        this.time -= this.UPDATE_RATE;
-
-        this.update();
-    }
-
-    const time = this.time / this.UPDATE_RATE;
-
-    this.orbitControls.setMatrix(this.matrixModelView, time);
+    this.orbitControls.update(deltaTime);
+    this.orbitControls.setMatrix(this.matrixModelView);
 
     this.updateMatrices();
 
