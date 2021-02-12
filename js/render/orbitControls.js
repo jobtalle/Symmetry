@@ -10,7 +10,7 @@ const OrbitControls = function(element) {
     this.mouseX = this.mouseY = 0;
     this.mousePressed = false;
     this.rotationX = this.rotationXPrevious = Math.PI * .25;
-    this.rotationY = this.rotationYPrevious = Math.PI * 1.5;
+    this.rotationY = this.rotationYPrevious = 0;
     this.velocityX = 0;
     this.velocityY = 0;
     this.zoom = 2;
@@ -20,7 +20,7 @@ const OrbitControls = function(element) {
     element.addEventListener("mousemove", event => this.mouseMove(event.clientX, event.clientY));
 };
 
-OrbitControls.prototype.ROTATION_X_LIMITS = new Range(-Math.PI * .5, Math.PI * .5);
+OrbitControls.prototype.ROTATION_X_LIMITS = new Range(-Math.PI * .4, Math.PI * .4);
 OrbitControls.prototype.SENSITIVITY = 6;
 OrbitControls.prototype.DAMPING = .8;
 
@@ -88,7 +88,6 @@ OrbitControls.prototype.update = function(deltaTime) {
         this.rotationX = this.ROTATION_X_LIMITS.clamp(this.rotationX + this.velocityX * deltaTime);
         this.rotationY += this.velocityY * deltaTime;
     }
-
 };
 
 /**
