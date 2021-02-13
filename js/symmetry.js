@@ -14,11 +14,9 @@ const Symmetry = function(canvas) {
     this.matrixMVP = new Matrix();
     this.planeRenderer = new PlaneRenderer(this.gl);
     this.planes = [
-        new Plane(new Vector(), new Vector(1, .2, 0).normalize()),
-        new Plane(new Vector(), new Vector(0, 1, .2).normalize()),
-        new Plane(new Vector(), new Vector(.2, 3, 1).normalize()),
-        new Plane(new Vector(), new Vector(-1, -1, 1).normalize()),
-        new Plane(new Vector(.3), new Vector(1, 1, 1).normalize()),
+        new Plane(new Vector(), .3, .3),
+        new Plane(new Vector(), .5, 2),
+        new Plane(new Vector(), .1, 3)
     ];
 
     this.planeRenderer.setPlane(this.planes[this.planes.length - 1]);
@@ -30,7 +28,7 @@ const Symmetry = function(canvas) {
 
 Symmetry.prototype.ZNEAR = .1;
 Symmetry.prototype.ZFAR = 100;
-Symmetry.prototype.ANGLE = Math.PI * .35;
+Symmetry.prototype.ANGLE = Math.PI * .4;
 Symmetry.prototype.MAX_PLANES = 10;
 
 /**
@@ -38,6 +36,11 @@ Symmetry.prototype.MAX_PLANES = 10;
  */
 Symmetry.prototype.updatePlanes = function() {
     this.geometry.setPlanes(this.planes);
+
+    if (this.planes.length > 0)
+        this.planeRenderer.setPlane(this.planes[this.planes.length - 1]);
+    else
+        this.planeRenderer.setPlane(null);
 };
 
 /**

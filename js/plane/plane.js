@@ -1,10 +1,23 @@
 /**
  * A plane
  * @param {Vector} anchor The plane anchor
- * @param {Vector} normal The plane normal
+ * @param {number} rotationX The X axis rotation
+ * @param {number} rotationY The Y axis rotation
  * @constructor
  */
-const Plane = function(anchor, normal) {
+const Plane = function(anchor, rotationX, rotationY) {
     this.anchor = anchor;
-    this.normal = normal;
+    this.rotationX = rotationX;
+    this.rotationY = rotationY;
+};
+
+/**
+ * Get the normal for this plane
+ * @returns {Vector} The surface normal for this plane
+ */
+Plane.prototype.getNormal = function() {
+    return new Vector(
+        Math.cos(this.rotationY) * Math.cos(this.rotationX),
+        Math.sin(this.rotationX),
+        Math.sin(this.rotationY) * Math.cos(this.rotationX));
 };

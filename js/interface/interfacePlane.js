@@ -17,6 +17,8 @@ const InterfacePlane = function(symmetry, plane, removeMe, moveUp, moveDown) {
 InterfacePlane.prototype = Object.create(InterfaceElement.prototype);
 InterfacePlane.prototype.TITLE = "Symmetry plane";
 InterfacePlane.prototype.COORDINATE_RANGE = new Range(-1, 1);
+InterfacePlane.prototype.ROTATION_RANGE_X = new Range(0, Math.PI);
+InterfacePlane.prototype.ROTATION_RANGE_Y = new Range(0, Math.PI * 2);
 
 /**
  * Create the element
@@ -99,6 +101,30 @@ InterfacePlane.prototype.createElement = function(symmetry, plane, removeMe, mov
         .01,
         value => {
             plane.anchor.z = value;
+
+            symmetry.updatePlanes();
+        }
+    ));
+
+    element.appendChild(this.createSlider(
+        "Rotation X: ",
+        this.ROTATION_RANGE_X,
+        plane.rotationX,
+        .01,
+        value => {
+            plane.rotationX = value;
+
+            symmetry.updatePlanes();
+        }
+    ));
+
+    element.appendChild(this.createSlider(
+        "Rotation Y: ",
+        this.ROTATION_RANGE_Y,
+        plane.rotationY,
+        .01,
+        value => {
+            plane.rotationY = value;
 
             symmetry.updatePlanes();
         }

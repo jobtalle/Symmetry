@@ -5,7 +5,6 @@
  */
 const PlaneRenderer = function(gl) {
     this.gl = gl;
-    this.plane = null;
     this.vaoPlane = gl.createVertexArray();
     this.vaoLines = gl.createVertexArray();
     this.bufferVertices = gl.createBuffer();
@@ -22,6 +21,7 @@ const PlaneRenderer = function(gl) {
         this.SHADER_FRAGMENT_LINES,
         ["mvp", "radius", "anchor", "x", "y"],
         ["position"]);
+    this.plane = null;
 
     gl.bindVertexArray(this.vaoPlane);
 
@@ -51,7 +51,7 @@ const PlaneRenderer = function(gl) {
 };
 
 PlaneRenderer.prototype.RADIUS = 3;
-PlaneRenderer.prototype.GRID_RESOLUTION = 10;
+PlaneRenderer.prototype.GRID_RESOLUTION = 9;
 
 PlaneRenderer.prototype.SHADER_VERTEX = `#version 300 es
 uniform float radius;
@@ -110,20 +110,23 @@ PlaneRenderer.prototype.createLines = function() {
 PlaneRenderer.prototype.setPlane = function(plane) {
     this.plane = plane;
 
-    const x = plane.normal.cross(Vector.UP).normalize();
-    const y = plane.normal.cross(x);
+    if (plane) {
+        const normal = plane.getNormal();
+        const x = normal.cross(Vector.UP).normalize();
+        const y = normal.cross(x);
 
-    this.shaderPlane.use();
+        this.shaderPlane.use();
 
-    this.gl.uniform3f(this.shaderPlane["uAnchor"], plane.anchor.x, plane.anchor.y, plane.anchor.z);
-    this.gl.uniform3f(this.shaderPlane["uX"], x.x, x.y, x.z);
-    this.gl.uniform3f(this.shaderPlane["uY"], y.x, y.y, y.z);
+        this.gl.uniform3f(this.shaderPlane["uAnchor"], plane.anchor.x, plane.anchor.y, plane.anchor.z);
+        this.gl.uniform3f(this.shaderPlane["uX"], x.x, x.y, x.z);
+        this.gl.uniform3f(this.shaderPlane["uY"], y.x, y.y, y.z);
 
-    this.shaderLines.use();
+        this.shaderLines.use();
 
-    this.gl.uniform3f(this.shaderLines["uAnchor"], plane.anchor.x, plane.anchor.y, plane.anchor.z);
-    this.gl.uniform3f(this.shaderLines["uX"], x.x, x.y, x.z);
-    this.gl.uniform3f(this.shaderLines["uY"], y.x, y.y, y.z);
+        this.gl.uniform3f(this.shaderLines["uAnchor"], plane.anchor.x, plane.anchor.y, plane.anchor.z);
+        this.gl.uniform3f(this.shaderLines["uX"], x.x, x.y, x.z);
+        this.gl.uniform3f(this.shaderLines["uY"], y.x, y.y, y.z);
+    }
 };
 
 /**
@@ -131,21 +134,23 @@ PlaneRenderer.prototype.setPlane = function(plane) {
  * @param {number[]} mvp The model view projection matrix
  */
 PlaneRenderer.prototype.draw = function(mvp) {
-    this.shaderPlane.use();
+    if (this.plane) {
+        this.shaderPlane.use();
 
-    this.gl.depthMask(false);
+        this.gl.depthMask(false);
 
-    this.gl.bindVertexArray(this.vaoPlane);
-    this.gl.uniformMatrix4fv(this.shaderPlane["uMvp"], false, mvp);
-    this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
+        this.gl.bindVertexArray(this.vaoPlane);
+        this.gl.uniformMatrix4fv(this.shaderPlane["uMvp"], false, mvp);
+        this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
 
-    this.gl.depthMask(true);
+        this.gl.depthMask(true);
 
-    this.shaderLines.use();
+        this.shaderLines.use();
 
-    this.gl.bindVertexArray(this.vaoLines);
-    this.gl.uniformMatrix4fv(this.shaderLines["uMvp"], false, mvp);
-    this.gl.drawArrays(this.gl.LINES, 0, this.GRID_RESOLUTION << 2);
+        this.gl.bindVertexArray(this.vaoLines);
+        this.gl.uniformMatrix4fv(this.shaderLines["uMvp"], false, mvp);
+        this.gl.drawArrays(this.gl.LINES, 0, this.GRID_RESOLUTION << 2);
+    }
 };
 
 /**

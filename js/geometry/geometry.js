@@ -138,8 +138,10 @@ Geometry.prototype.setPlanes = function(planes) {
     const normals = [];
 
     for (const plane of planes) {
+        const normal = plane.getNormal();
+
         anchors.push(plane.anchor.x, plane.anchor.y, plane.anchor.z);
-        normals.push(plane.normal.x, plane.normal.y, plane.normal.z);
+        normals.push(normal.x, normal.y, normal.z);
     }
 
     if (planes.length !== 0) {
@@ -147,6 +149,12 @@ Geometry.prototype.setPlanes = function(planes) {
 
         this.gl.uniform3fv(this.shaders[planes.length - 1]["uPlaneAnchors"], anchors);
         this.gl.uniform3fv(this.shaders[planes.length - 1]["uPlaneNormals"], normals);
+    }
+    else {
+        this.shaders[0].use();
+
+        this.gl.uniform3f(this.shaders[0]["uPlaneAnchors"], 0, 0, 0);
+        this.gl.uniform3f(this.shaders[0]["uPlaneNormals"], 0, 1, 0);
     }
 
     this.planeCount = planes.length;
@@ -157,18 +165,18 @@ Geometry.prototype.setPlanes = function(planes) {
  * @param {number[]} mvp The model view projection matrix
  */
 Geometry.prototype.draw = function(mvp) {
-    if (this.mesh === null || this.planeCount === 0)
+    if (this.mesh === null)
         return;
 
-    const shader = this.shaders[this.planeCount - 1];
+    const shader = this.shaders[Math.max(0, this.planeCount - 1)];
 
     shader.use();
 
-    this.gl.bindVertexArray(this.vaos[this.planeCount - 1]);
+    this.gl.bindVertexArray(this.vaos[Math.max(0, this.planeCount - 1)]);
 
     this.gl.uniformMatrix4fv(shader["uMvp"], false, mvp);
 
-    for (let sides = 0, sideCount = 1 << this.planeCount; sides < sideCount; ++sides) {
+    for (let sides = 0, sideCount = Math.max(2, 1 << this.planeCount); sides < sideCount; ++sides) {
         this.gl.uniform1ui(shader["uSides"], sides);
 
         this.gl.drawElements(this.gl.TRIANGLES, this.mesh.indexCount, this.gl.UNSIGNED_SHORT, 0);

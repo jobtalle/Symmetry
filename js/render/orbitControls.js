@@ -23,7 +23,7 @@ const OrbitControls = function(element) {
 
 OrbitControls.prototype.ZOOM_INITIAL = 2;
 OrbitControls.prototype.ZOOM_SPEED = .1;
-OrbitControls.prototype.ZOOM_LIMITS = new Range(.5, 7);
+OrbitControls.prototype.ZOOM_LIMITS = new Range(.5, 10);
 OrbitControls.prototype.ROTATION_X_LIMITS = new Range(-Math.PI * .45, Math.PI * .45);
 OrbitControls.prototype.ROTATION_X_DEFAULT = Math.PI * .2;
 OrbitControls.prototype.SENSITIVITY = 6;
