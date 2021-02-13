@@ -35,6 +35,7 @@ InterfaceRoot.prototype.createOptionCube = function(parameters, geometry) {
             .01,
             value => {
                 size = value;
+
                 update();
             }
         ));

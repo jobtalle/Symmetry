@@ -112,6 +112,8 @@ Geometry.prototype.updateVAOs = function() {
         this.gl.vertexAttribPointer(this.shaders[shader]["aNormal"],
             3, this.gl.FLOAT, false, 24, 12);
     }
+
+    this.gl.bindVertexArray(null);
 };
 
 /**

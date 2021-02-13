@@ -19,9 +19,18 @@ InterfacePlanes.prototype.createElement = function(symmetry) {
     const element = document.createElement("div");
 
     for (const plane of symmetry.planes) {
-        const planeInterface = new InterfacePlane(symmetry, plane, () => {
-            element.removeChild(planeInterface);
-        });
+        const planeInterface = new InterfacePlane(
+            symmetry,
+            plane,
+            () => {
+                element.removeChild(planeInterface);
+            },
+            () => {
+                planeInterface.parentNode.insertBefore(planeInterface, planeInterface.previousElementSibling);
+            },
+            () => {
+                planeInterface.parentNode.insertBefore(planeInterface.nextElementSibling, planeInterface);
+            });
 
         element.appendChild(planeInterface);
     }

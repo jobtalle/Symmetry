@@ -1,6 +1,6 @@
 /**
  * The renderer
- * @param {HTMLCanvasElement} canvas A WebGL 1 capable canvas element
+ * @param {HTMLCanvasElement} canvas A WebGL 2 capable canvas element
  * @constructor
  */
 const Symmetry = function(canvas) {
@@ -12,6 +12,7 @@ const Symmetry = function(canvas) {
     this.matrixProjection = new Matrix();
     this.matrixModelView = new Matrix();
     this.matrixMVP = new Matrix();
+    this.planeRenderer = new PlaneRenderer(this.gl);
     this.planes = [
         new Plane(new Vector(), new Vector(1, .2, 0).normalize()),
         new Plane(new Vector(), new Vector(0, 1, .2).normalize()),
@@ -19,6 +20,8 @@ const Symmetry = function(canvas) {
         new Plane(new Vector(), new Vector(-1, -1, 1).normalize()),
         new Plane(new Vector(.3), new Vector(1, 1, 1).normalize()),
     ];
+
+    this.planeRenderer.setPlane(this.planes[this.planes.length - 1]);
 
     this.updatePlanes();
     this.resize(canvas.width, canvas.height);
@@ -60,6 +63,13 @@ Symmetry.prototype.draw = function(deltaTime) {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
     this.geometry.draw(this.matrixBuffer);
+
+    this.gl.enable(this.gl.BLEND);
+    this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE);
+
+    this.planeRenderer.draw(this.matrixBuffer);
+
+    this.gl.disable(this.gl.BLEND);
 };
 
 /**
@@ -79,4 +89,12 @@ Symmetry.prototype.resize = function(width, height) {
     this.width = width;
     this.height = height;
     this.matrixProjection.perspective(this.ANGLE, width / height, this.ZNEAR, this.ZFAR);
+};
+
+/**
+ * Free all resources
+ */
+Symmetry.prototype.free = function() {
+    this.planeRenderer.free();
+    this.geometry.free();
 };
