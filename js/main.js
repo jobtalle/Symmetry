@@ -28,6 +28,7 @@
 
     new Interface(
         symmetry,
+        document.getElementById("interface-rendering"),
         document.getElementById("interface-root"),
         document.getElementById("interface-planes"));
 }

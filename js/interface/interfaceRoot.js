@@ -1,6 +1,7 @@
 /**
  * The root model interface
  * @param {Geometry} geometry The geometry object
+ * @returns {HTMLElement} The interface
  * @constructor
  */
 const InterfaceRoot = function(geometry) {

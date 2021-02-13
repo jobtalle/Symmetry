@@ -100,3 +100,24 @@ InterfaceElement.prototype.createSlider = function(name, range, initial, step, o
 
     return element;
 };
+
+/**
+ * Create a checkbox
+ * @param {string} name The checkbox name
+ * @param {boolean} initial The initial value
+ * @param {Function} onUpdate A function to execute when the state has changed
+ * @returns {HTMLLabelElement} The checkbox
+ */
+InterfaceElement.prototype.createCheckBox = function(name, initial, onUpdate) {
+    const element = document.createElement("label");
+    const checkbox = document.createElement("input");
+
+    checkbox.type = "checkbox";
+    checkbox.checked = initial;
+    checkbox.onchange = () => onUpdate(checkbox.checked);
+
+    element.appendChild(document.createTextNode(name));
+    element.appendChild(checkbox);
+
+    return element;
+};

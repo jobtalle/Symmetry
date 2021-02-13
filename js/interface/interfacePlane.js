@@ -5,6 +5,7 @@
  * @param {Function} removeMe A function that removes this interface from the GUI
  * @param {Function} moveUp Move the interface up
  * @param {Function} moveDown Move the interface down
+ * @returns {HTMLElement} The interface
  * @constructor
  */
 const InterfacePlane = function(symmetry, plane, removeMe, moveUp, moveDown) {

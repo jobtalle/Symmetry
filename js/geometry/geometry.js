@@ -10,6 +10,7 @@ const Geometry = function(gl, maxPlanes) {
     this.vaos = new Array(maxPlanes).fill(null);
     this.mesh = null;
     this.planeCount = 0;
+    this.edges = false;
 };
 
 Geometry.prototype.SHADER_VERTEX = `#version 300 es
@@ -49,6 +50,7 @@ Geometry.prototype.SHADER_FRAGMENT = `#version 300 es
 uniform mediump vec3 planeAnchors[PLANES];
 uniform mediump vec3 planeNormals[PLANES];
 uniform mediump uint sides;
+uniform mediump float edgeThreshold;
 
 in mediump vec3 vNormal;
 in mediump vec3 vPosition;
@@ -64,7 +66,7 @@ void main() {
     if ((sides >> uint(plane)) % 2u == 1u)
       transformedPosition -= (planeDistance + planeDistance) * planeNormals[plane];
     
-    if (planeDistance < 0.0)
+    if (planeDistance < edgeThreshold)
       discard;
   }
 
@@ -86,7 +88,7 @@ Geometry.prototype.makeShaders = function(gl, maxPlanes) {
             gl,
             this.SHADER_VERTEX.replaceAll("PLANES", planes.toString()),
             this.SHADER_FRAGMENT.replaceAll("PLANES", planes.toString()),
-            ["mvp", "planeAnchors", "planeNormals", "sides"],
+            ["mvp", "planeAnchors", "planeNormals", "sides", "edgeThreshold"],
             ["position", "normal"]);
 
     return shaders;
@@ -175,6 +177,7 @@ Geometry.prototype.draw = function(mvp) {
     this.gl.bindVertexArray(this.vaos[Math.max(0, this.planeCount - 1)]);
 
     this.gl.uniformMatrix4fv(shader["uMvp"], false, mvp);
+    this.gl.uniform1f(shader["uEdgeThreshold"], this.edges && this.planeCount > 0 ? .01 : 0);
 
     for (let sides = 0, sideCount = Math.max(2, 1 << this.planeCount); sides < sideCount; ++sides) {
         this.gl.uniform1ui(shader["uSides"], sides);

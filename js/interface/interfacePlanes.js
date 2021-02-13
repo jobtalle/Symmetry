@@ -1,6 +1,7 @@
 /**
  * The plane list interface
  * @param {Symmetry} symmetry The symmetry object
+ * @returns {HTMLElement} The interface
  * @constructor
  */
 const InterfacePlanes = function(symmetry) {
