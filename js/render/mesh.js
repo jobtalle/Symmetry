@@ -1,7 +1,7 @@
 /**
  * A 3D mesh
  * @param {WebGL2RenderingContext} gl A WebGL rendering context
- * @param {number[]} vertices The vertices
+ * @param {number[]} vertices The bufferVertices
  * @param {number[]} indices The indices
  * @constructor
  */

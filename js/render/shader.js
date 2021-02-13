@@ -1,8 +1,8 @@
 /**
- * A shader
+ * A shaderPlane
  * @param {WebGL2RenderingContext} gl A WebGL 1 context
- * @param {string} vertex The vertex shader
- * @param {string} fragment The fragment shader
+ * @param {string} vertex The vertex shaderPlane
+ * @param {string} fragment The fragment shaderPlane
  * @param {string[]} uniforms An array of uniform names
  * @param {string[]} attributes An array of attribute names
  * @constructor
@@ -39,14 +39,14 @@ const Shader = function(gl, vertex, fragment, uniforms, attributes) {
 };
 
 /**
- * Make this shader program active
+ * Make this shaderPlane program active
  */
 Shader.prototype.use = function() {
     this.gl.useProgram(this.program);
 };
 
 /**
- * Free the shader
+ * Free the shaderPlane
  */
 Shader.prototype.free = function() {
     this.gl.deleteProgram(this.program);
