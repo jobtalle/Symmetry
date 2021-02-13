@@ -53,6 +53,10 @@ body {
     flex-direction: column;
 }
 
+#interface .category  button {
+    margin-top: 8px;
+}
+
 #interface .collapsed .header button:after {
     content: "+";
 }

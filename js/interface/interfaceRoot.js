@@ -41,7 +41,56 @@ InterfaceRoot.prototype.createOptionCube = function(parameters, geometry) {
         ));
 
         update();
-    }
+    };
+
+    return element;
+};
+
+/**
+ * Create the sphere option
+ * @param {HTMLDivElement} parameters The div to put parameters in
+ * @param {Geometry} geometry The geometry object
+ * @returns {HTMLOptionElement} The sphere option
+ */
+InterfaceRoot.prototype.createOptionSphere = function(parameters, geometry) {
+    const element = document.createElement("option");
+    let radius = ModelSphere.prototype.DEFAULT_RADIUS;
+    let subdivisions = ModelSphere.prototype.DEFAULT_SUBDIVISIONS;
+
+    const update = () => {
+        geometry.setMesh(new ModelSphere(geometry.gl, radius, subdivisions));
+    };
+
+    element.appendChild(document.createTextNode("Sphere"));
+    element.onselect = () => {
+        this.clearElement(parameters);
+
+        parameters.appendChild(this.createSlider(
+            "Radius: ",
+            new Range(.15, 1.5),
+            radius,
+            .01,
+            value => {
+                radius = value;
+
+                update();
+            }
+        ));
+
+        parameters.appendChild(this.createSlider(
+            "Subdivisions: ",
+            new Range(0, 2),
+            subdivisions,
+            1,
+            value => {
+                subdivisions = value;
+
+                update();
+            }
+        ));
+
+        update();
+    };
 
     return element;
 };
@@ -56,7 +105,13 @@ InterfaceRoot.prototype.createDropdown = function(parameters, geometry) {
     const element = document.createElement("select");
 
     element.appendChild(this.createOptionCube(parameters, geometry));
+    element.appendChild(this.createOptionSphere(parameters, geometry));
+
     element.firstChild.onselect();
+
+    element.onchange = () => {
+        element.children[element.selectedIndex].onselect();
+    };
 
     return element;
 };

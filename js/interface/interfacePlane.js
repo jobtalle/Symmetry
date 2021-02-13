@@ -16,8 +16,8 @@ const InterfacePlane = function(symmetry, plane, removeMe, moveUp, moveDown) {
 
 InterfacePlane.prototype = Object.create(InterfaceElement.prototype);
 InterfacePlane.prototype.TITLE = "Symmetry plane";
-InterfacePlane.prototype.COORDINATE_RANGE = new Range(-1, 1);
-InterfacePlane.prototype.ROTATION_RANGE_X = new Range(0, Math.PI);
+InterfacePlane.prototype.COORDINATE_RANGE = new Range(-2, 2);
+InterfacePlane.prototype.ROTATION_RANGE_X = new Range(0, Math.PI * 2);
 InterfacePlane.prototype.ROTATION_RANGE_Y = new Range(0, Math.PI * 2);
 
 /**
@@ -35,7 +35,7 @@ InterfacePlane.prototype.createElement = function(symmetry, plane, removeMe, mov
     const buttonDown = document.createElement("button");
     const buttonDelete = document.createElement("button");
 
-    element.style.backgroundColor = "hsl(" + (360 * Math.random()) + ",30%,30%)"; // TODO: Make plane ID colors
+    element.style.backgroundColor = "hsl(" + (360 * Math.random()) + ",30%,30%)";
 
     buttonUp.appendChild(document.createTextNode("▲"));
     buttonDown.appendChild(document.createTextNode("▼"));

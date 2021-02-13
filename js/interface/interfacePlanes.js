@@ -17,13 +17,16 @@ InterfacePlanes.prototype.TITLE = "Planes";
  */
 InterfacePlanes.prototype.createElement = function(symmetry) {
     const element = document.createElement("div");
+    const planes = document.createElement("div");
+    const add = document.createElement("button");
+    const randomize = document.createElement("button");
 
-    for (const plane of symmetry.planes) {
+    const makeInterface = plane => {
         const planeInterface = new InterfacePlane(
             symmetry,
             plane,
             () => {
-                element.removeChild(planeInterface);
+                planes.removeChild(planeInterface);
             },
             () => {
                 planeInterface.parentNode.insertBefore(planeInterface, planeInterface.previousElementSibling);
@@ -32,8 +35,33 @@ InterfacePlanes.prototype.createElement = function(symmetry) {
                 planeInterface.parentNode.insertBefore(planeInterface.nextElementSibling, planeInterface);
             });
 
-        element.appendChild(planeInterface);
-    }
+        return planeInterface;
+    };
+
+    for (const plane of symmetry.planes)
+        planes.appendChild(makeInterface(plane));
+
+    add.appendChild(document.createTextNode("Add plane"));
+    add.onclick = () => {
+        const plane = symmetry.addPlane();
+
+        if (plane)
+            planes.appendChild(makeInterface(plane));
+    };
+
+    randomize.appendChild(document.createTextNode("Randomize"));
+    randomize.onclick = () => {
+        symmetry.randomize();
+
+        this.clearElement(planes);
+
+        for (const plane of symmetry.planes)
+            planes.appendChild(makeInterface(plane));
+    };
+
+    element.appendChild(randomize);
+    element.appendChild(planes);
+    element.appendChild(add);
 
     return element;
 };

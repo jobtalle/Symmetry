@@ -14,7 +14,7 @@ InterfaceElement.prototype.CLASS_COLLAPSED = "collapsed";
  */
 InterfaceElement.prototype.clearElement = function(element) {
     while (element.firstChild)
-        element.removeEventListener(element.firstChild);
+        element.removeChild(element.firstChild);
 };
 
 /**
@@ -91,8 +91,8 @@ InterfaceElement.prototype.createSlider = function(name, range, initial, step, o
     slider.type = "range";
     slider.min = range.min.toString();
     slider.max = range.max.toString();
-    slider.value = initial.toString();
     slider.step = step.toString();
+    slider.value = initial.toString();
     slider.oninput = () => onUpdate(slider.valueAsNumber);
 
     element.appendChild(document.createTextNode(name));

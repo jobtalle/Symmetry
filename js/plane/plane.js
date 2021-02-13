@@ -1,11 +1,11 @@
 /**
  * A plane
- * @param {Vector} anchor The plane anchor
- * @param {number} rotationX The X axis rotation
- * @param {number} rotationY The Y axis rotation
+ * @param {Vector} [anchor] The plane anchor
+ * @param {number} [rotationX] The X axis rotation
+ * @param {number} [rotationY] The Y axis rotation
  * @constructor
  */
-const Plane = function(anchor, rotationX, rotationY) {
+const Plane = function(anchor = new Vector(), rotationX = 0, rotationY = 0) {
     this.anchor = anchor;
     this.rotationX = rotationX;
     this.rotationY = rotationY;

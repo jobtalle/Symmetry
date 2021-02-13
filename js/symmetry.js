@@ -13,15 +13,10 @@ const Symmetry = function(canvas) {
     this.matrixModelView = new Matrix();
     this.matrixMVP = new Matrix();
     this.planeRenderer = new PlaneRenderer(this.gl);
-    this.planes = [
-        new Plane(new Vector(), .3, .3),
-        new Plane(new Vector(), .5, 2),
-        new Plane(new Vector(), .1, 3)
-    ];
+    this.planes = [];
 
     this.planeRenderer.setPlane(this.planes[this.planes.length - 1]);
 
-    this.updatePlanes();
     this.resize(canvas.width, canvas.height);
     this.setup();
 };
@@ -30,6 +25,43 @@ Symmetry.prototype.ZNEAR = .1;
 Symmetry.prototype.ZFAR = 100;
 Symmetry.prototype.ANGLE = Math.PI * .4;
 Symmetry.prototype.MAX_PLANES = 10;
+
+/**
+ * Randomize the planes
+ */
+Symmetry.prototype.randomize = function() {
+    const planeCount = Math.floor(2 + (this.MAX_PLANES - 2) * Math.random());
+
+    this.planes = [];
+
+    for (let plane = 0; plane < planeCount; ++plane)
+        this.planes.push(new Plane(
+            new Vector(
+                Math.random() - .5,
+                Math.random() - .5,
+                Math.random() - .5),
+            Math.random() * Math.PI * 2,
+            Math.random() * Math.PI * 2));
+
+    this.updatePlanes();
+};
+
+/**
+ * Add a new plane
+ * @returns {Plane|null} The new plane, or null if the capacity has been reached
+ */
+Symmetry.prototype.addPlane = function() {
+    if (this.planes.length < this.MAX_PLANES) {
+        const plane = new Plane();
+
+        this.planes.push(plane);
+        this.updatePlanes();
+
+        return plane;
+    }
+
+    return null;
+};
 
 /**
  * Update the planes list
