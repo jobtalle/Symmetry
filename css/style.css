@@ -17,8 +17,58 @@ body {
     width: 15%;
 }
 
+#interface .header {
+    display: flex;
+}
+
+#interface .header h2 {
+    flex-grow: 1;
+}
+
+#interface .header h3 {
+    flex-grow: 1;
+}
+
+#interface .header button {
+    border: none;
+    color: white;
+    font-size: 32px;
+    font-family: monospace;
+    background: none;
+    cursor: pointer;
+    outline: 0;
+}
+
+#interface .header button:after {
+    content: "-";
+}
+
+#interface .subcategory {
+    margin-left: 16px;
+}
+
+#interface .category {
+    display: flex;
+    flex-direction: column;
+}
+
+#interface .collapsed .header button:after {
+    content: "+";
+}
+
+#interface .collapsed .content {
+    display: none;
+}
+
 #interface h2 {
     border-bottom: 1px solid white;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+#interface h3 {
+    border-bottom: 1px solid white;
+    margin-top: 8px;
     margin-bottom: 8px;
 }
 

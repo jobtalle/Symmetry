@@ -4,7 +4,7 @@
  * @constructor
  */
 const InterfaceRoot = function(geometry) {
-    return this.createElement(geometry);
+    return this.createCategory(this.TITLE, this.createElement(geometry));
 };
 
 InterfaceRoot.prototype = Object.create(InterfaceElement.prototype);
@@ -69,7 +69,6 @@ InterfaceRoot.prototype.createElement = function(geometry) {
     const element = document.createElement("div");
     const parameters = document.createElement("div");
 
-    element.appendChild(this.createTitle(this.TITLE));
     element.appendChild(this.createDropdown(parameters, geometry));
     element.appendChild(parameters);
 

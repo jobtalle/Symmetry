@@ -2,6 +2,12 @@ const InterfaceElement = function() {
 
 };
 
+InterfaceElement.prototype.CLASS_CATEGORY = "category";
+InterfaceElement.prototype.CLASS_SUBCATEGORY = "subcategory";
+InterfaceElement.prototype.CLASS_CATEGORY_CONTENT = "content";
+InterfaceElement.prototype.CLASS_HEADER = "header";
+InterfaceElement.prototype.CLASS_COLLAPSED = "collapsed";
+
 /**
  * Clear an element
  * @param {HTMLElement} element The element to clear
@@ -12,12 +18,57 @@ InterfaceElement.prototype.clearElement = function(element) {
 };
 
 /**
+ * Create a category that can be collapsed
+ * @param {string} title The category title
+ * @param {HTMLElement} content The HTML content for this category
+ * @param {boolean} [subcategory] True if this is a subcategory
+ * @returns {HTMLElement} The category element
+ */
+InterfaceElement.prototype.createCategory = function(title, content, subcategory = false) {
+    const element = document.createElement("div");
+    const header = document.createElement("div");
+    const toggle = document.createElement("button");
+
+    content.className = this.CLASS_CATEGORY_CONTENT;
+
+    toggle.onclick = () => element.classList.toggle(this.CLASS_COLLAPSED);
+
+    header.className = this.CLASS_HEADER;
+
+    header.appendChild(subcategory ? this.createSubTitle(title) : this.createTitle(title));
+    header.appendChild(toggle);
+
+    element.className = this.CLASS_CATEGORY;
+
+    if (subcategory)
+        element.classList.add(this.CLASS_SUBCATEGORY);
+
+    element.appendChild(header);
+    element.appendChild(content);
+
+    return element;
+};
+
+/**
  * Create a title element
  * @param {string} text The title text
  * @returns {HTMLHeadingElement} The element
  */
 InterfaceElement.prototype.createTitle = function(text) {
     const element = document.createElement("h2");
+
+    element.appendChild(document.createTextNode(text));
+
+    return element;
+};
+
+/**
+ * Create a sub title element
+ * @param {string} text The title text
+ * @returns {HTMLHeadingElement} The element
+ */
+InterfaceElement.prototype.createSubTitle = function(text) {
+    const element = document.createElement("h3");
 
     element.appendChild(document.createTextNode(text));
 

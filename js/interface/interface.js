@@ -6,8 +6,6 @@
  * @constructor
  */
 const Interface = function(symmetry, root, planes) {
-    this.root = root;
-    this.planes = planes;
-
-    this.root.appendChild(new InterfaceRoot(symmetry.geometry));
+    root.appendChild(new InterfaceRoot(symmetry.geometry));
+    planes.appendChild(new InterfacePlanes(symmetry));
 };

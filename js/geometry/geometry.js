@@ -140,10 +140,12 @@ Geometry.prototype.setPlanes = function(planes) {
         normals.push(plane.normal.x, plane.normal.y, plane.normal.z);
     }
 
-    this.shaders[planes.length - 1].use();
+    if (planes.length !== 0) {
+        this.shaders[planes.length - 1].use();
 
-    this.gl.uniform3fv(this.shaders[planes.length - 1]["uPlaneAnchors"], anchors);
-    this.gl.uniform3fv(this.shaders[planes.length - 1]["uPlaneNormals"], normals);
+        this.gl.uniform3fv(this.shaders[planes.length - 1]["uPlaneAnchors"], anchors);
+        this.gl.uniform3fv(this.shaders[planes.length - 1]["uPlaneNormals"], normals);
+    }
 
     this.planeCount = planes.length;
 };
@@ -153,7 +155,7 @@ Geometry.prototype.setPlanes = function(planes) {
  * @param {number[]} mvp The model view projection matrix
  */
 Geometry.prototype.draw = function(mvp) {
-    if (this.mesh === null)
+    if (this.mesh === null || this.planeCount === 0)
         return;
 
     const shader = this.shaders[this.planeCount - 1];

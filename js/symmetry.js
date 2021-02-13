@@ -20,8 +20,7 @@ const Symmetry = function(canvas) {
         new Plane(new Vector(.3), new Vector(1, 1, 1).normalize()),
     ];
 
-    this.geometry.setPlanes(this.planes);
-
+    this.updatePlanes();
     this.resize(canvas.width, canvas.height);
     this.setup();
 };
@@ -30,6 +29,13 @@ Symmetry.prototype.ZNEAR = .1;
 Symmetry.prototype.ZFAR = 100;
 Symmetry.prototype.ANGLE = Math.PI * .35;
 Symmetry.prototype.MAX_PLANES = 10;
+
+/**
+ * Update the planes list
+ */
+Symmetry.prototype.updatePlanes = function() {
+    this.geometry.setPlanes(this.planes);
+};
 
 /**
  * Calculate the current MVP matrix
