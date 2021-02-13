@@ -13,17 +13,29 @@ const OrbitControls = function(element) {
     this.rotationY = this.rotationYPrevious = 0;
     this.velocityX = 0;
     this.velocityY = 0;
-    this.zoom = 2;
+    this.zoom = this.zoomTarget = this.ZOOM_INITIAL;
 
     element.addEventListener("mousedown", this.mouseDown.bind(this));
     element.addEventListener("mouseup", this.mouseUp.bind(this));
     element.addEventListener("mousemove", event => this.mouseMove(event.clientX, event.clientY));
+    element.addEventListener("wheel", event => this.moveZoom(Math.sign(event.deltaY)));
 };
 
+OrbitControls.prototype.ZOOM_INITIAL = 2;
+OrbitControls.prototype.ZOOM_SPEED = .1;
+OrbitControls.prototype.ZOOM_LIMITS = new Range(.5, 4);
 OrbitControls.prototype.ROTATION_X_LIMITS = new Range(-Math.PI * .45, Math.PI * .45);
 OrbitControls.prototype.ROTATION_X_DEFAULT = Math.PI * .2;
 OrbitControls.prototype.SENSITIVITY = 6;
 OrbitControls.prototype.DAMPING = .8;
+
+/**
+ * Change the zoom
+ * @param {number} sign The direction to change the zoom with, -1 or 1
+ */
+OrbitControls.prototype.moveZoom = function(sign) {
+    this.zoomTarget = this.ZOOM_LIMITS.clamp(this.zoomTarget * (1 + this.ZOOM_SPEED * sign));
+};
 
 /**
  * Update the source and target vectors according to rotation values
@@ -89,6 +101,8 @@ OrbitControls.prototype.update = function(deltaTime) {
         this.rotationX = this.ROTATION_X_LIMITS.clamp(this.rotationX + this.velocityX * deltaTime);
         this.rotationY += this.velocityY * deltaTime;
     }
+
+    this.zoom += (this.zoomTarget - this.zoom) * (1 - this.DAMPING);
 };
 
 /**
