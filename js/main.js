@@ -1,5 +1,5 @@
 {
-    const wrapper = document.getElementById("wrapper");
+    const wrapper = document.getElementById("renderer-wrapper");
     const renderer = document.getElementById("renderer");
     const symmetry = new Symmetry(renderer);
     let lastTime = performance.now();
@@ -25,4 +25,9 @@
     };
 
     requestAnimationFrame(loop);
+
+    new Interface(
+        symmetry,
+        document.getElementById("interface-root"),
+        document.getElementById("interface-planes"));
 }

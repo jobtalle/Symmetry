@@ -1,32 +1,18 @@
 /**
  * The geometry
  * @param {WebGL2RenderingContext} gl A WebGL rendering context
+ * @param {number} maxPlanes The maximum number of planes
  * @constructor
  */
-const Geometry = function(gl) {
+const Geometry = function(gl, maxPlanes) {
     this.gl = gl;
-    this.shader = new Shader(
-        gl,
-        this.SHADER_VERTEX,
-        this.SHADER_FRAGMENT,
-        ["mvp", "planeAnchors", "planeNormals", "sides"],
-        ["position", "normal"]);
-    this.mesh = new ModelCube(gl);
-    this.vao = gl.createVertexArray();
+    this.shaders = this.makeShaders(gl, maxPlanes);
+    this.vaos = new Array(maxPlanes).fill(null);
+    this.mesh = null;
     this.planeCount = 0;
-
-    gl.bindVertexArray(this.vao);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.bufferVertices);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.bufferIndices);
-    gl.enableVertexAttribArray(this.shader["aPosition"]);
-    gl.vertexAttribPointer(this.shader["aPosition"], 3, gl.FLOAT, false, 24, 0);
-    gl.enableVertexAttribArray(this.shader["aNormal"]);
-    gl.vertexAttribPointer(this.shader["aNormal"], 3, gl.FLOAT, false, 24, 12);
 };
 
 Geometry.prototype.SHADER_VERTEX = `#version 300 es
-#define PLANES 4
-
 uniform mat4 mvp;
 uniform mediump vec3 planeAnchors[PLANES];
 uniform mediump vec3 planeNormals[PLANES];
@@ -60,8 +46,6 @@ void main() {
 `;
 
 Geometry.prototype.SHADER_FRAGMENT = `#version 300 es
-#define PLANES 4
-
 uniform mediump vec3 planeAnchors[PLANES];
 uniform mediump vec3 planeNormals[PLANES];
 uniform mediump uint sides;
@@ -89,6 +73,61 @@ void main() {
 `;
 
 /**
+ * Make the shaders
+ * @param {WebGL2RenderingContext} gl A WebGL rendering context
+ * @param {number} maxPlanes The maximum number of planes
+ * @return {Shader[]} The shaders
+ */
+Geometry.prototype.makeShaders = function(gl, maxPlanes) {
+    const shaders = new Array(maxPlanes);
+
+    for (let planes = 1; planes <= maxPlanes; ++planes)
+        shaders[planes - 1] = new Shader(
+            gl,
+            this.SHADER_VERTEX.replaceAll("PLANES", planes.toString()),
+            this.SHADER_FRAGMENT.replaceAll("PLANES", planes.toString()),
+            ["mvp", "planeAnchors", "planeNormals", "sides"],
+            ["position", "normal"]);
+
+    return shaders;
+};
+
+/**
+ * Update the vertex array objects
+ */
+Geometry.prototype.updateVAOs = function() {
+    for (const vao of this.vaos) if (vao)
+        this.gl.deleteVertexArray(vao);
+
+    for (let shader = 0; shader < this.shaders.length; ++shader) {
+        this.vaos[shader] = this.gl.createVertexArray();
+
+        this.gl.bindVertexArray(this.vaos[shader]);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.mesh.bufferVertices);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.mesh.bufferIndices);
+        this.gl.enableVertexAttribArray(this.shaders[shader]["aPosition"]);
+        this.gl.vertexAttribPointer(this.shaders[shader]["aPosition"],
+            3, this.gl.FLOAT, false, 24, 0);
+        this.gl.enableVertexAttribArray(this.shaders[shader]["aNormal"]);
+        this.gl.vertexAttribPointer(this.shaders[shader]["aNormal"],
+            3, this.gl.FLOAT, false, 24, 12);
+    }
+};
+
+/**
+ * Assign a new mesh
+ * @param {Mesh} mesh The mesh
+ */
+Geometry.prototype.setMesh = function(mesh) {
+    if (this.mesh)
+        this.mesh.free();
+
+    this.mesh = mesh;
+
+    this.updateVAOs();
+};
+
+/**
  * Set the cutting planes
  * @param {Plane[]} planes All separating planes
  */
@@ -101,10 +140,10 @@ Geometry.prototype.setPlanes = function(planes) {
         normals.push(plane.normal.x, plane.normal.y, plane.normal.z);
     }
 
-    this.shader.use();
+    this.shaders[planes.length - 1].use();
 
-    this.gl.uniform3fv(this.shader["uPlaneAnchors"], anchors);
-    this.gl.uniform3fv(this.shader["uPlaneNormals"], normals);
+    this.gl.uniform3fv(this.shaders[planes.length - 1]["uPlaneAnchors"], anchors);
+    this.gl.uniform3fv(this.shaders[planes.length - 1]["uPlaneNormals"], normals);
 
     this.planeCount = planes.length;
 };
@@ -114,14 +153,19 @@ Geometry.prototype.setPlanes = function(planes) {
  * @param {number[]} mvp The model view projection matrix
  */
 Geometry.prototype.draw = function(mvp) {
-    this.shader.use();
+    if (this.mesh === null)
+        return;
 
-    this.gl.bindVertexArray(this.vao);
+    const shader = this.shaders[this.planeCount - 1];
 
-    this.gl.uniformMatrix4fv(this.shader["uMvp"], false, mvp);
+    shader.use();
+
+    this.gl.bindVertexArray(this.vaos[this.planeCount - 1]);
+
+    this.gl.uniformMatrix4fv(shader["uMvp"], false, mvp);
 
     for (let sides = 0, sideCount = 1 << this.planeCount; sides < sideCount; ++sides) {
-        this.gl.uniform1ui(this.shader["uSides"], sides);
+        this.gl.uniform1ui(shader["uSides"], sides);
 
         this.gl.drawElements(this.gl.TRIANGLES, this.mesh.indexCount, this.gl.UNSIGNED_SHORT, 0);
     }
@@ -131,7 +175,12 @@ Geometry.prototype.draw = function(mvp) {
  * Free the geometry
  */
 Geometry.prototype.free = function() {
-    this.gl.deleteVertexArray(this.vao);
-    this.shader.free();
-    this.mesh.free();
+    for (const vao of this.vaos) if (vao)
+        this.gl.deleteVertexArray(vao);
+
+    for (const shader of this.shaders)
+        shader.free();
+
+    if (this.mesh)
+        this.mesh.free();
 };

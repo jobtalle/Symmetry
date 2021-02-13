@@ -7,7 +7,7 @@ const Symmetry = function(canvas) {
     this.gl = canvas.getContext("webgl2", {antialias: false});
     this.width = this.height = 0;
     this.orbitControls = new OrbitControls(canvas);
-    this.geometry = new Geometry(this.gl);
+    this.geometry = new Geometry(this.gl, this.MAX_PLANES);
     this.matrixBuffer = new Array(16);
     this.matrixProjection = new Matrix();
     this.matrixModelView = new Matrix();
@@ -17,6 +17,7 @@ const Symmetry = function(canvas) {
         new Plane(new Vector(), new Vector(0, 1, .2).normalize()),
         new Plane(new Vector(), new Vector(.2, 3, 1).normalize()),
         new Plane(new Vector(), new Vector(-1, -1, 1).normalize()),
+        new Plane(new Vector(.3), new Vector(1, 1, 1).normalize()),
     ];
 
     this.geometry.setPlanes(this.planes);
@@ -28,6 +29,7 @@ const Symmetry = function(canvas) {
 Symmetry.prototype.ZNEAR = .1;
 Symmetry.prototype.ZFAR = 100;
 Symmetry.prototype.ANGLE = Math.PI * .35;
+Symmetry.prototype.MAX_PLANES = 10;
 
 /**
  * Calculate the current MVP matrix
@@ -51,7 +53,7 @@ Symmetry.prototype.draw = function(deltaTime) {
     this.gl.viewport(0, 0, this.width, this.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    this.geometry.draw(this.matrixBuffer, this.planes);
+    this.geometry.draw(this.matrixBuffer);
 };
 
 /**

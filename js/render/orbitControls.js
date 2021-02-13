@@ -9,7 +9,7 @@ const OrbitControls = function(element) {
     this.to = new Vector();
     this.mouseX = this.mouseY = 0;
     this.mousePressed = false;
-    this.rotationX = this.rotationXPrevious = Math.PI * .25;
+    this.rotationX = this.rotationXPrevious = this.ROTATION_X_DEFAULT;
     this.rotationY = this.rotationYPrevious = 0;
     this.velocityX = 0;
     this.velocityY = 0;
@@ -20,7 +20,8 @@ const OrbitControls = function(element) {
     element.addEventListener("mousemove", event => this.mouseMove(event.clientX, event.clientY));
 };
 
-OrbitControls.prototype.ROTATION_X_LIMITS = new Range(-Math.PI * .4, Math.PI * .4);
+OrbitControls.prototype.ROTATION_X_LIMITS = new Range(-Math.PI * .45, Math.PI * .45);
+OrbitControls.prototype.ROTATION_X_DEFAULT = Math.PI * .2;
 OrbitControls.prototype.SENSITIVITY = 6;
 OrbitControls.prototype.DAMPING = .8;
 
@@ -53,7 +54,7 @@ OrbitControls.prototype.mouseMove = function(x, y) {
         const dx = (x - this.mouseX) / radius;
         const dy = (y - this.mouseY) / radius;
 
-        this.rotationX = this.ROTATION_X_LIMITS.clamp(this.rotationX) + dy * this.SENSITIVITY;
+        this.rotationX = this.ROTATION_X_LIMITS.clamp(this.rotationX + dy * this.SENSITIVITY);
         this.rotationY = this.rotationY - dx * this.SENSITIVITY;
     }
 

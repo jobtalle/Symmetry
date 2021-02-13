@@ -4,7 +4,7 @@
  * @param {number} size The length of the edges
  * @constructor
  */
-const ModelCube = function(gl, size = 1) {
+const ModelCube = function(gl, size = this.DEFAULT_SIZE) {
     const halfSize = size * .5;
     const vertices = [
         // Front
@@ -92,3 +92,4 @@ const ModelCube = function(gl, size = 1) {
 };
 
 ModelCube.prototype = Object.create(Mesh.prototype);
+ModelCube.prototype.DEFAULT_SIZE = 1;
