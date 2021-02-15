@@ -14,8 +14,12 @@ body {
     font-family: sans-serif;
     padding-left: 16px;
     padding-right: 16px;
-    width: 17%;
     overflow-y: scroll;
+    width: 256px;
+}
+
+#interface label {
+    white-space: nowrap;
 }
 
 #interface .header {

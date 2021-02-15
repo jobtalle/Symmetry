@@ -16,7 +16,13 @@ const OrbitControls = function(element) {
     this.zoom = this.zoomTarget = this.ZOOM_INITIAL;
 
     element.addEventListener("mousedown", this.mouseDown.bind(this));
+    element.addEventListener("touchstart", event => {
+        this.mouseMove(event.touches[0].clientX, event.touches[0].clientY);
+        this.mouseDown();
+    });
+    element.addEventListener("touchmove", event => this.mouseMove(event.touches[0].clientX, event.touches[0].clientY));
     element.addEventListener("mouseup", this.mouseUp.bind(this));
+    element.addEventListener("touchend", this.mouseUp.bind(this));
     element.addEventListener("mousemove", event => this.mouseMove(event.clientX, event.clientY));
     element.addEventListener("wheel", event => this.moveZoom(Math.sign(event.deltaY)));
 };
