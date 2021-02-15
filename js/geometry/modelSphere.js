@@ -81,7 +81,6 @@ ModelSphere.prototype.subdivide = function(points, indices) {
     const indexCount = indices.length / 3;
     const sourceIndices = indices.slice();
 
-    // points.length = 0;
     indices.length = 0;
 
     for (let index = 0; index < indexCount; index++) {

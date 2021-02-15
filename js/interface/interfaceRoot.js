@@ -97,6 +97,68 @@ InterfaceRoot.prototype.createOptionSphere = function(parameters, geometry) {
 };
 
 /**
+ * Create the cylinder option
+ * @param {HTMLDivElement} parameters The div to put parameters in
+ * @param {Geometry} geometry The geometry object
+ * @returns {HTMLOptionElement} The cylinder option
+ */
+InterfaceRoot.prototype.createOptionCylinder = function(parameters, geometry) {
+    const element = document.createElement("option");
+    let radius = ModelCylinder.prototype.DEFAULT_RADIUS;
+    let height = ModelCylinder.prototype.DEFAULT_HEIGHT;
+    let subdivisions = ModelCylinder.prototype.DEFAULT_SUBDIVISIONS;
+
+    const update = () => {
+        geometry.setMesh(new ModelCylinder(geometry.gl, radius, height, subdivisions));
+    };
+
+    element.appendChild(document.createTextNode("Cylinder"));
+    element.onselect = () => {
+        this.clearElement(parameters);
+
+        parameters.appendChild(this.createSlider(
+            "Radius: ",
+            new Range(.15, 1.5),
+            radius,
+            .01,
+            value => {
+                radius = value;
+
+                update();
+            }
+        ));
+
+        parameters.appendChild(this.createSlider(
+            "Height: ",
+            new Range(.15, 2),
+            height,
+            .01,
+            value => {
+                height = value;
+
+                update();
+            }
+        ));
+
+        parameters.appendChild(this.createSlider(
+            "Subdivisions: ",
+            new Range(3, 24),
+            subdivisions,
+            1,
+            value => {
+                subdivisions = value;
+
+                update();
+            }
+        ));
+
+        update();
+    };
+
+    return element;
+};
+
+/**
  * Create the dropdown menu of primitive options
  * @param {HTMLDivElement} parameters The div to put parameters in
  * @param {Geometry} geometry The geometry object
@@ -107,6 +169,7 @@ InterfaceRoot.prototype.createDropdown = function(parameters, geometry) {
 
     element.appendChild(this.createOptionCube(parameters, geometry));
     element.appendChild(this.createOptionSphere(parameters, geometry));
+    element.appendChild(this.createOptionCylinder(parameters, geometry));
 
     element.firstChild.onselect();
 
