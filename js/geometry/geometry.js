@@ -32,12 +32,10 @@ void main() {
   vec3 transformedNormal = normal;
   
   for (int plane = 0; plane < PLANES; plane += 1) {
-    float planeDistance = dot(planeNormals[plane], transformedPosition - planeAnchors[plane]);
-    
-    vDistances[plane] = planeDistance;
+    vDistances[plane] = dot(planeNormals[plane], transformedPosition - planeAnchors[plane]);
     
     if ((sides >> uint(plane)) % 2u == 1u) {    
-      transformedPosition -= (planeDistance + planeDistance) * planeNormals[plane];
+      transformedPosition -= vDistances[plane] * planeNormals[plane] * 2.0;
       transformedNormal = reflect(transformedNormal, planeNormals[plane]);
     }
   }

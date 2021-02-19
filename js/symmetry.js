@@ -31,7 +31,7 @@ Symmetry.prototype.MAX_PLANES = 10;
  * Randomize the planes
  */
 Symmetry.prototype.randomize = function() {
-    const planeCount = Math.floor(2 + (this.MAX_PLANES - 2) * Math.random());
+    const planeCount = Math.floor(4 + (this.MAX_PLANES - 4) * Math.random());
 
     this.planes = [];
 
