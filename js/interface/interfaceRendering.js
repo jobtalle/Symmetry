@@ -24,6 +24,7 @@ InterfaceRendering.prototype.createElement = function(geometry) {
         false,
         checked => {
             geometry.edges = checked;
+            geometry.updated = true;
         }
     ));
 

@@ -14,6 +14,7 @@ const OrbitControls = function(element) {
     this.velocityX = 0;
     this.velocityY = 0;
     this.zoom = this.zoomTarget = this.ZOOM_INITIAL;
+    this.updated = true;
 
     element.addEventListener("mousedown", this.mouseDown.bind(this));
     element.addEventListener("touchstart", event => {
@@ -34,6 +35,7 @@ OrbitControls.prototype.ROTATION_X_LIMITS = new Range(-Math.PI * .45, Math.PI * 
 OrbitControls.prototype.ROTATION_X_DEFAULT = Math.PI * .2;
 OrbitControls.prototype.SENSITIVITY = 6;
 OrbitControls.prototype.DAMPING = .8;
+OrbitControls.prototype.THRESHOLD = .0001;
 
 /**
  * Change the zoom
@@ -92,6 +94,8 @@ OrbitControls.prototype.mouseUp = function() {
  * @param {number} deltaTime Passed time in seconds
  */
 OrbitControls.prototype.update = function(deltaTime) {
+    this.updated = this.mousePressed;
+
     if (this.mousePressed) {
         this.velocityX = (this.rotationX - this.rotationXPrevious) / deltaTime;
         this.velocityY = (this.rotationY - this.rotationYPrevious) / deltaTime;
@@ -108,7 +112,21 @@ OrbitControls.prototype.update = function(deltaTime) {
         this.rotationY += this.velocityY * deltaTime;
     }
 
+    if (Math.abs(this.rotationX - this.rotationXPrevious) < this.THRESHOLD)
+        this.rotationX = this.rotationXPrevious;
+
+    if (Math.abs(this.rotationY - this.rotationYPrevious) < this.THRESHOLD)
+        this.rotationY = this.rotationYPrevious;
+
     this.zoom += (this.zoomTarget - this.zoom) * (1 - this.DAMPING);
+
+    if (Math.abs(this.zoom - this.zoomTarget) < this.THRESHOLD)
+        this.zoom = this.zoomTarget;
+
+    if (this.zoom !== this.zoomTarget ||
+        this.rotationXPrevious !== this.rotationX ||
+        this.rotationYPrevious !== this.rotationY)
+        this.updated = true;
 };
 
 /**

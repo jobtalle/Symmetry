@@ -11,6 +11,7 @@ const Geometry = function(gl, maxPlanes) {
     this.mesh = null;
     this.planeCount = 0;
     this.edges = false;
+    this.updated = true;
 };
 
 Geometry.prototype.SHADER_VERTEX = `#version 300 es
@@ -127,6 +128,7 @@ Geometry.prototype.setMesh = function(mesh) {
         this.mesh.free();
 
     this.mesh = mesh;
+    this.updated = true;
 
     this.updateVAOs();
 };
@@ -160,6 +162,7 @@ Geometry.prototype.setPlanes = function(planes) {
     }
 
     this.planeCount = planes.length;
+    this.updated = true;
 };
 
 /**
@@ -184,6 +187,8 @@ Geometry.prototype.draw = function(mvp) {
 
         this.gl.drawElements(this.gl.TRIANGLES, this.mesh.indexCount, this.gl.UNSIGNED_SHORT, 0);
     }
+
+    this.updated = false;
 };
 
 /**

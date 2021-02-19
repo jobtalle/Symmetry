@@ -90,21 +90,25 @@ Symmetry.prototype.updateMatrices = function() {
  */
 Symmetry.prototype.draw = function(deltaTime) {
     this.orbitControls.update(deltaTime);
-    this.orbitControls.setMatrix(this.matrixModelView);
 
-    this.updateMatrices();
+    if (this.orbitControls.updated || this.geometry.updated) {
+        this.orbitControls.setMatrix(this.matrixModelView);
 
-    this.gl.viewport(0, 0, this.width, this.height);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        this.updateMatrices();
 
-    this.geometry.draw(this.matrixBuffer);
+        this.gl.viewport(0, 0, this.width, this.height);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    this.gl.enable(this.gl.BLEND);
-    this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE);
+        this.geometry.draw(this.matrixBuffer);
 
-    this.planeRenderer.draw(this.matrixBuffer);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE);
 
-    this.gl.disable(this.gl.BLEND);
+        this.planeRenderer.draw(this.matrixBuffer);
+
+        this.gl.disable(this.gl.BLEND);
+        console.log("r");
+    }
 };
 
 /**
