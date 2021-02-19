@@ -37,9 +37,9 @@ Symmetry.prototype.randomize = function() {
     for (let plane = 0; plane < planeCount; ++plane)
         this.planes.push(new Plane(
             new Vector(
-                Math.random() - .5,
-                Math.random() - .5,
-                Math.random() - .5),
+                Math.random() * .3 - .15,
+                Math.random() * .3 - .15,
+                Math.random() * .3 - .15),
             Math.random() * Math.PI * 2,
             Math.random() * Math.PI * 2));
 
