@@ -25,7 +25,7 @@ in vec3 position;
 in vec3 normal;
 
 out vec3 vNormal;
-out vec3 vPosition;
+out float vDistances[PLANES];
 
 void main() {  
   vec3 transformedPosition = position;
@@ -34,6 +34,8 @@ void main() {
   for (int plane = 0; plane < PLANES; plane += 1) {
     float planeDistance = dot(planeNormals[plane], transformedPosition - planeAnchors[plane]);
     
+    vDistances[plane] = planeDistance;
+    
     if ((sides >> uint(plane)) % 2u == 1u) {    
       transformedPosition -= (planeDistance + planeDistance) * planeNormals[plane];
       transformedNormal = reflect(transformedNormal, planeNormals[plane]);
@@ -41,35 +43,23 @@ void main() {
   }
   
   vNormal = transformedNormal;
-  vPosition = position;
 
   gl_Position = mvp * vec4(transformedPosition, 1.0);
 }
 `;
 
 Geometry.prototype.SHADER_FRAGMENT = `#version 300 es
-uniform mediump vec3 planeAnchors[PLANES];
-uniform mediump vec3 planeNormals[PLANES];
-uniform mediump uint sides;
 uniform mediump float edgeThreshold;
 
 in mediump vec3 vNormal;
-in mediump vec3 vPosition;
+in mediump float vDistances[PLANES];
 
 out lowp vec4 color;
 
 void main() {
-  mediump vec3 transformedPosition = vPosition;
-  
-  for (int plane = 0; plane < PLANES; plane += 1) {
-    mediump float planeDistance = dot(planeNormals[plane], transformedPosition - planeAnchors[plane]);
-    
-    if ((sides >> uint(plane)) % 2u == 1u)
-      transformedPosition -= (planeDistance + planeDistance) * planeNormals[plane];
-    
-    if (planeDistance < edgeThreshold)
+  for (int plane = 0; plane < PLANES; plane += 1)
+    if (vDistances[plane] < edgeThreshold)
       discard;
-  }
 
   color = vec4(vNormal * 0.5 + 0.5, 1.0);
 }
