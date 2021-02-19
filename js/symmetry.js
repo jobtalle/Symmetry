@@ -19,6 +19,7 @@ const Symmetry = function(canvas) {
 
     this.resize(canvas.width, canvas.height);
     this.setup();
+    this.randomize();
 };
 
 Symmetry.prototype.ZNEAR = .1;
