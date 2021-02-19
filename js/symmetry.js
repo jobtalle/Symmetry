@@ -107,7 +107,6 @@ Symmetry.prototype.draw = function(deltaTime) {
         this.planeRenderer.draw(this.matrixBuffer);
 
         this.gl.disable(this.gl.BLEND);
-        console.log("r");
     }
 };
 
