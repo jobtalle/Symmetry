@@ -60,6 +60,14 @@ InterfacePlanes.prototype.createElement = function(symmetry) {
             planes.appendChild(makeInterface(plane));
     };
 
+    element.appendChild(this.createCheckBox(
+      "Grid: ",
+      true,
+      checked => {
+        symmetry.gridVisible = checked;
+        symmetry.updatePlanes();
+      }
+    ));
     element.appendChild(randomize);
     element.appendChild(planes);
     element.appendChild(add);

@@ -22,6 +22,7 @@ const PlaneRenderer = function(gl) {
         ["mvp", "radius", "anchor", "x", "y"],
         ["position"]);
     this.plane = null;
+    this.gridVisible = true;
 
     gl.bindVertexArray(this.vaoPlane);
 
@@ -103,6 +104,10 @@ PlaneRenderer.prototype.createLines = function() {
     return data;
 };
 
+PlaneRenderer.prototype.setGridVisible = function(value) {
+  this.gridVisible = value;
+}
+
 /**
  * Set the plane to render
  * @param {Plane|null} plane A plane, or null if no plane should be rendered
@@ -137,19 +142,21 @@ PlaneRenderer.prototype.draw = function(mvp) {
     if (this.plane) {
         this.shaderPlane.use();
 
-        this.gl.depthMask(false);
+        if (this.gridVisible) {
+          this.gl.depthMask(false);
 
-        this.gl.bindVertexArray(this.vaoPlane);
-        this.gl.uniformMatrix4fv(this.shaderPlane["uMvp"], false, mvp);
-        this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
+          this.gl.bindVertexArray(this.vaoPlane);
+          this.gl.uniformMatrix4fv(this.shaderPlane["uMvp"], false, mvp);
+          this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
 
-        this.gl.depthMask(true);
+          this.gl.depthMask(true);
 
-        this.shaderLines.use();
+          this.shaderLines.use();
 
-        this.gl.bindVertexArray(this.vaoLines);
-        this.gl.uniformMatrix4fv(this.shaderLines["uMvp"], false, mvp);
-        this.gl.drawArrays(this.gl.LINES, 0, this.GRID_RESOLUTION << 2);
+          this.gl.bindVertexArray(this.vaoLines);
+          this.gl.uniformMatrix4fv(this.shaderLines["uMvp"], false, mvp);
+          this.gl.drawArrays(this.gl.LINES, 0, this.GRID_RESOLUTION << 2);
+        }
     }
 };
 
