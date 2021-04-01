@@ -14,6 +14,7 @@ const Symmetry = function(canvas) {
     this.matrixMVP = new Matrix();
     this.planeRenderer = new PlaneRenderer(this.gl);
     this.planes = [];
+    this.gridVisible = true;
 
     this.planeRenderer.setPlane(this.planes[this.planes.length - 1]);
 
@@ -69,6 +70,7 @@ Symmetry.prototype.addPlane = function() {
  */
 Symmetry.prototype.updatePlanes = function() {
     this.geometry.setPlanes(this.planes);
+    this.planeRenderer.setGridVisible(this.gridVisible)
 
     if (this.planes.length > 0)
         this.planeRenderer.setPlane(this.planes[this.planes.length - 1]);
